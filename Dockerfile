@@ -2,17 +2,17 @@
 # Stage 1 - Build/compile app using container
 # =======================================================
 
-ARG IMAGE_BASE=6.0-alpine
+ARG IMAGE_BASE=9.0
 
 # Build image has SDK and tools (Linux)
 FROM mcr.microsoft.com/dotnet/sdk:$IMAGE_BASE as build
 WORKDIR /build
 
 # Copy project source files
-COPY src ./src
+COPY BlazorWeb ./BlazorWeb
 
 # Restore, build & publish
-WORKDIR /build/src
+WORKDIR /build/BlazorWeb
 RUN dotnet restore
 RUN dotnet publish --no-restore --configuration Release
 
@@ -33,16 +33,16 @@ FROM mcr.microsoft.com/dotnet/aspnet:$IMAGE_BASE
 WORKDIR /app
 
 # Copy already published binaries (from build stage image)
-COPY --from=build /build/src/bin/Release/net6.0/publish/ .
+COPY --from=build /build/BlazorWeb/bin/Release/net9.0/publish/ .
 
 # Expose port 5000 from Kestrel webserver
-EXPOSE 5000
+EXPOSE 7015
 
 # Tell Kestrel to listen on port 5000 and serve plain HTTP
-ENV ASPNETCORE_URLS http://*:5000
+ENV ASPNETCORE_URLS http://*:7015
 ENV ASPNETCORE_ENVIRONMENT Production
 # This is critical for the Azure AD signin flow to work in Kubernetes and App Service
 ENV ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
 
 # Run the ASP.NET Core app
-ENTRYPOINT dotnet dotnet-demoapp.dll
+ENTRYPOINT dotnet BlazorWeb.dll
