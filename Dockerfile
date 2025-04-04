@@ -9,10 +9,10 @@ FROM mcr.microsoft.com/dotnet/sdk:$IMAGE_BASE as build
 WORKDIR /build
 
 # Copy project source files
-COPY BlazorWeb ./BlazorWeb
+COPY BlazorWeb ./src
 
 # Restore, build & publish
-WORKDIR /build/BlazorWeb
+WORKDIR /build/src
 RUN dotnet restore
 RUN dotnet publish --no-restore --configuration Release
 
@@ -33,7 +33,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:$IMAGE_BASE
 WORKDIR /app
 
 # Copy already published binaries (from build stage image)
-COPY --from=build /build/BlazorWeb/bin/Release/net9.0/publish/ .
+COPY --from=build /build/src/bin/Release/net9.0/publish/ .
 
 # Expose port 5000 from Kestrel webserver
 EXPOSE 7015
