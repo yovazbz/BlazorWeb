@@ -34,7 +34,7 @@ pipeline
         }
         stage("Deploy to container"){
             steps{
-                sh "docker run -d --name dotnet -p 7015:7015 yovazbz/blazorweb:latest"
+                sh "docker run -d --name blazorweb -p 7015:7015 yovazbz/blazorweb:latest"
             }
         }      
     }
