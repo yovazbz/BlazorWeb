@@ -2,7 +2,7 @@
 # Stage 1 - Build/compile app using container
 # =======================================================
 
-ARG IMAGE_BASE=9.0
+ARG IMAGE_BASE=9.0-alpine
 
 # Build image has SDK and tools (Linux)
 FROM mcr.microsoft.com/dotnet/sdk:$IMAGE_BASE as build
@@ -36,10 +36,10 @@ WORKDIR /app
 COPY --from=build /build/src/bin/Release/net9.0/publish/ .
 
 # Expose port 5000 from Kestrel webserver
-EXPOSE 7015
+EXPOSE 5000
 
 # Tell Kestrel to listen on port 5000 and serve plain HTTP
-ENV ASPNETCORE_URLS http://*:7015
+ENV ASPNETCORE_URLS http://*:5000
 ENV ASPNETCORE_ENVIRONMENT Production
 # This is critical for the Azure AD signin flow to work in Kubernetes and App Service
 ENV ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
